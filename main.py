@@ -11,9 +11,11 @@ def create_app():
 
     app.config.from_object("config.app_config")
 
-    # Initialise
+    # Initialise objects
     db.init_app(app)
 
+    # register cli commands blueprint
+    from commands import db_commands
+    app.register_blueprint(db_commands)
+
     return app
-
-
