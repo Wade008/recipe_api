@@ -11,4 +11,8 @@ class Recipe(db.Model):
     private = db.Column(db.Boolean())
     date_added = db.Column(db.Date())
     category_id = db.Column(db.Integer, db.ForeignKey("categories.category_id"))
-    
+    ingredient_list = db.relationship(
+        "IngredientList",
+        backref="recipe",
+        cascade="all, delete"
+    )

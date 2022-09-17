@@ -2,6 +2,7 @@ from flask import Blueprint
 from main import db
 from models.recipe import Recipe
 from models.category import Category
+from models.ingredient import Ingredient
 from datetime import date
 
 
@@ -44,6 +45,7 @@ def seed_db():
     # get id for breakfast category
     breakfast = Category.query.filter_by(category = "Breakfast").first()
 
+    # add recipe
     recipe1 = Recipe(
         recipe_name="Bacon and Eggs",
         serves=2,
@@ -56,6 +58,25 @@ def seed_db():
     )
 
     db.session.add(recipe1)
+
+    # add ingredient
+    recipe1_ingredients = [
+        "Eggs",
+        "Bacon",
+        "Tomataos"
+    ]
+
+    for ingredient in recipe1_ingredients:
+        required_ingredient = Ingredient(
+            ingredient=ingredient
+        )
+        db.session.add(required_ingredient)
+
+    #commit 
     db.session.commit()
+
+    # add ingredients for recipe1 to ingredient_list
+     
+
 
     print("Tables seeded")
