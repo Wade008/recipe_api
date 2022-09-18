@@ -3,6 +3,7 @@ from main import db
 from models.recipe import Recipe
 from models.category import Category
 from models.ingredient import Ingredient
+from models.ingredient_list import IngredientList
 from datetime import date
 
 
@@ -43,7 +44,7 @@ def seed_db():
     db.session.commit()
 
     # get id for breakfast category
-    breakfast = Category.query.filter_by(category = "Breakfast").first()
+    breakfast = Category.query.filter_by(category="Breakfast").first()
 
     # add recipe
     recipe1 = Recipe(
@@ -63,7 +64,8 @@ def seed_db():
     recipe1_ingredients = [
         "Eggs",
         "Bacon",
-        "Tomataos"
+        "Tomataos",
+        "Bread"
     ]
 
     for ingredient in recipe1_ingredients:
@@ -72,11 +74,35 @@ def seed_db():
         )
         db.session.add(required_ingredient)
 
-    #commit 
+    # commit
     db.session.commit()
 
-    # add ingredients for recipe1 to ingredient_list
-     
+    # add ingredients and amounts for recipe1 to ingredient_list
 
+    my_list = [
+        {"amount": "2 eggs",
+         "recipe_id": 1,
+         "ingredient_id": 1},
+        {"amount": "2 bacon rashers",
+         "recipe_id": 1,
+         "ingredient_id": 2},
+        {"amount": "1 tomato",
+         "recipe_id": 1,
+         "ingredient_id": 3},
+        {"amount": "2 slices",
+         "recipe_id": 1,
+         "ingredient_id": 4}
+    ]
+
+    for index in range(len(my_list)):
+        recipe1_ingredients = IngredientList(
+            amount=my_list[index]["amount"],
+            recipe_id=my_list[index]["recipe_id"],
+            ingredient_id=my_list[index]["ingredient_id"]
+        )
+        db.session.add(recipe1_ingredients)
+
+    # commit
+    db.session.commit()
 
     print("Tables seeded")
