@@ -6,6 +6,9 @@ class Config(object):
     # access to .env and get the value of SECRET_KEY, the variable name can be any but needs to match
     JWT_SECRET_KEY = os.environ.get("SECRET_KEY")
 
+    # don't order fields alphabetically
+    JSON_SORT_KEYS = False
+
     @property
     def SQLALCHEMY_DATABASE_URI(self):
         # access to .env and get the value of DATABASE_URL, the variable name can be any but needs to match
@@ -37,4 +40,3 @@ elif environment == "testing":
     app_config = TestingConfig()
 else:
     app_config = DevelopmentConfig()
-    
