@@ -20,7 +20,7 @@ def create_app():
     from commands import db_commands
     app.register_blueprint(db_commands)
 
-    # resiter all controllers
+    # register all controllers
     from controllers import registerable_contollers
     for controller in registerable_contollers:
         app.register_blueprint(controller)
