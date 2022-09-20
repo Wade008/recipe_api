@@ -69,7 +69,7 @@ def seed_db():
 
     for index in range(len(amount_list)):
         recipe_ingredient = IngredientList(
-            amount=amount_list[index]["amount"],
+            ingredient_requirements=amount_list[index]["amount"],
             recipe_id=amount_list[index]["recipe_id"],
             ingredient_id=amount_list[index]["ingredient_id"]
         )

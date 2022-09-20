@@ -35,64 +35,68 @@ recipes = [
      }
 ]
 
+food =  pd.read_csv("generic-food.csv", usecols=[0])
+
+recipe_ingredients = food["FOOD NAME"].tolist()
+
 # add ingredient
-recipe_ingredients = [
-    "Eggs",
-    "Bacon",
-    "Tomataos",
-    "Bread",
-    "Ham",
-    "Cheese",
-    "Butter",
-    "Fettuccine pasta",
-    "Salt",
-    "Black pepper",
-    "Shallots",
-    "Parmesan",
-    "Cream"
-]
+# recipe_ingredients = [
+#     "Eggs",
+#     "Bacon",
+#     "Tomataos",
+#     "Bread",
+#     "Ham",
+#     "Cheese",
+#     "Butter",
+#     "Fettuccine pasta",
+#     "Salt",
+#     "Black pepper",
+#     "Shallots",
+#     "Parmesan",
+#     "Cream"
+# ]
 
 amount_list = [
     {"amount": "2 eggs",
      "recipe_id": 1,
-     "ingredient_id": 1},
+     "ingredient_id": 632},
     {"amount": "2 bacon rashers",
      "recipe_id": 1,
-     "ingredient_id": 2},
+     "ingredient_id": 548},
     {"amount": "1 tomato",
      "recipe_id": 1,
-     "ingredient_id": 3},
+     "ingredient_id": 171},
     {"amount": "2 slices",
      "recipe_id": 1,
-     "ingredient_id": 4},
+     "ingredient_id": 822},
     {"amount": "2 slices",
      "recipe_id": 2,
-     "ingredient_id": 4},
+     "ingredient_id": 822},
     {"amount": "2 slices of ham",
      "recipe_id": 2,
-     "ingredient_id": 5},
+     "ingredient_id": 548},
     {"amount": "2 slices of cheese",
      "recipe_id": 2,
-     "ingredient_id": 6},
+     "ingredient_id": 630},
     {"amount": "1/4 of a tablespoon",
      "recipe_id": 2,
-     "ingredient_id": 7},
+     "ingredient_id": 661},
     {"amount": "250g of pasta",
      "recipe_id": 3,
-     "ingredient_id": 8},
+     "ingredient_id": 273},
     {"amount": "1/4 tablespoon of salt",
      "recipe_id": 3,
-     "ingredient_id": 9},
+     "ingredient_id": 660},
     {"amount": "small amount of black pepper",
      "recipe_id": 3,
-     "ingredient_id": 10},
+     "ingredient_id": 139},
     {"amount": "1 small shallot",
      "recipe_id": 3,
-     "ingredient_id": 11},
+     "ingredient_id": 243},
     {"amount": "3/4 parmesan",
      "recipe_id": 3,
-     "ingredient_id": 12},
+     "ingredient_id": 725},
     {"amount": "1/2 cup of heavy cream",
      "recipe_id": 3,
-     "ingredient_id": 13}
+     "ingredient_id": 663}
 ]
