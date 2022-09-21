@@ -8,5 +8,5 @@ class Category(db.Model):
     recipes = db.relationship(
         "Recipe",
         backref="category"
-       
+
     )
