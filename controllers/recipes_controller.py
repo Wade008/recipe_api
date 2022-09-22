@@ -22,6 +22,10 @@ def get_recipes():
 def get_recipe(id):
     # get recipe based on id
     recipe = Recipe.query.get(id)
+    # check if found
+    if not recipe:
+        return {"error": "recipe id not found"}
+
     result = recipe_schema.dump(recipe)
     return jsonify(result), 200
 
@@ -48,7 +52,33 @@ def new_recipe():
 # update a recipe
 
 
+@recipes.route("/<int:id>", methods=["PUT"])
+def update_recipe(id):
+
+    # seach for recipe
+    recipe = Recipe.query.get(id)
+    # check if it exists
+    if not recipe:
+        return {"error": "recipe id not found"}
+    # get recipe details from the frontend request
+    recipe_fields = recipe_schema.load(request.json)
+    # update the values for the recipe
+    recipe.recipe_name = recipe_fields["recipe_name"]
+    recipe.serves = recipe_fields["serves"]
+    recipe.instructions = recipe_fields["instructions"]
+    recipe.time_required = recipe_fields["time_required"]
+    recipe.private = recipe_fields["private"]
+
+    # save changes
+    db.session.commit()
+
+    return jsonify(recipe_schema.dump(recipe)), 201
+
+# update a recipe category
+
+
 # delete a recipe
+
 
 @recipes.route("/<int:id>", methods=["DELETE"])
 def delete_recipe(id):
@@ -66,3 +96,6 @@ def delete_recipe(id):
     db.session.commit()
 
     return {"message": "Recipe successfully deleted from database"}
+
+
+# get ingredients for a recipe
