@@ -7,6 +7,6 @@ class Category(db.Model):
     category = db.Column(db.String(), unique=True, nullable=False)
     recipes = db.relationship(
         "Recipe",
-        backref="category"
+        backref="recipe_category"
 
     )

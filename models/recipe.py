@@ -10,7 +10,7 @@ class Recipe(db.Model):
     time_required = db.Column(db.Float())
     private = db.Column(db.Boolean())
     date_added = db.Column(db.Date())
-    category_id = db.Column(db.Integer, db.ForeignKey("categories.category_id"))
+    category_id = db.Column(db.Integer, db.ForeignKey("categories.category_id"), nullable=True)
     ingredient_list = db.relationship(
         "IngredientList",
         backref="recipe",
