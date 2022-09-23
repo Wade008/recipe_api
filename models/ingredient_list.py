@@ -1,4 +1,4 @@
-from sqlite3 import dbapi2
+
 from main import db
 
 class IngredientList(db.Model):

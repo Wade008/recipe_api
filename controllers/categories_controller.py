@@ -81,6 +81,12 @@ def update_category(id):
     if exists:
         return {"error": "Category already exists"}, 403
 
+    category.category = category_fields["category"]
+
+    # save changes
+    db.session.commit()
+
+    return jsonify(category_schema.dump(category)), 201
 
 # delete a category
 @categories.route("/<int:id>", methods=["DELETE"])

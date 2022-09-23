@@ -2,7 +2,9 @@ from flask import Blueprint, jsonify, request
 from main import db
 from models.recipe import Recipe
 from models.category import Category
+from models.ingredient_list import IngredientList
 from schemas.recipe_schema import recipe_schema, recipes_schema
+from schemas.ingredient_list_schema import ingredient_list_schema, ingredients_list_schema
 from datetime import date
 from marshmallow.exceptions import ValidationError
 
@@ -60,9 +62,14 @@ def new_recipe():
         date_added=date.today(),
         category_id=cat_result.category_id
     )
-
+    print(recipe_fields["ingredient_list"])
     db.session.add(recipe)
     db.session.commit()
+
+    # now add data to the ingredient_list table, skip if ingredient_list is empty
+
+    print(recipe.recipe_id)
+
     return jsonify(recipe_schema.dump(recipe)), 201
 
 # update a recipe
@@ -81,7 +88,7 @@ def update_recipe(id):
 
     # to update category first lookup category in the category table
 
-    cat_search = recipe_fields["recipe_category"]["category"]
+    cat_search = recipe_fields["recipe_category"]
 
     # check if the category exists in the database
     cat_result = db.session.query(Category).filter(
@@ -127,6 +134,19 @@ def delete_recipe(id):
 
 
 # get ingredients for a recipe
+
+@recipes.route("/<int:id>/ingredients", methods=["GET"])
+def get_ingredients(id):
+    # seach for recipe
+    recipe = Recipe.query.get(id)
+    # check if it exists
+    if not recipe:
+        return {"error": "recipe id not found"}, 404
+
+    ingredients = IngredientList.query.filter_by(recipe_id=id).all()
+
+    result = ingredients_list_schema.dump(ingredients)
+    return jsonify(result), 200
 
 
 # catch validation errors

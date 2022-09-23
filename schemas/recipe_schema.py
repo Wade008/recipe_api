@@ -1,17 +1,19 @@
 from main import ma
 from marshmallow import fields
 from schemas.category_schema import CategorySchema
+from schemas.ingredient_list_schema import IngredientListSchema
 
 
 class RecipeSchema(ma.Schema):
     class Meta:
         ordered = True
         fields = ["recipe_id", "recipe_name", "serves",
-                  "instructions", "time_required", "private", "date_added", "category_id", "recipe_category"]
+                  "instructions", "time_required", "private", "date_added", "category_id", "recipe_category", "ingredient_list"]
         load_only = ["category_id"]
 
     # Schema is imported above
-    recipe_category = fields.Nested(CategorySchema, only=["category"])
+    recipe_category = fields.Pluck(CategorySchema, "category", many=False)
+    ingredient_list = fields.List(fields.Nested(IngredientListSchema, only=["ingredient","ingredient_requirements"]))
 
     # add validation here
     recipe_name = ma.String(required=True)
