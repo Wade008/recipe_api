@@ -1,8 +1,10 @@
 from flask import Blueprint, jsonify, request
 from main import db
 from models.recipe import Recipe
+from models.category import Category
 from schemas.recipe_schema import recipe_schema, recipes_schema
 from datetime import date
+from marshmallow.exceptions import ValidationError
 
 recipes = Blueprint("recipes", __name__, url_prefix="/recipes")
 
@@ -35,14 +37,28 @@ def get_recipe(id):
 @recipes.route("/", methods=["POST"])
 def new_recipe():
 
+    # add general error handling here
     recipe_fields = recipe_schema.load(request.json)
+
+    # to update category first lookup category in the category table
+
+    cat_search = recipe_fields["recipe_category"]["category"]
+
+    # check if the category exists in the database
+    cat_result = db.session.query(Category).filter(
+        db.func.lower(Category.category) == db.func.lower(cat_search)).first()
+
+    if not cat_result:
+        return {"error": "category not found, enter a different category"}, 404
+
     recipe = Recipe(
         recipe_name=recipe_fields["recipe_name"],
         serves=recipe_fields["serves"],
         instructions=recipe_fields["instructions"],
         time_required=recipe_fields["time_required"],
         private=recipe_fields["private"],
-        category_id=recipe_fields["category_id"]
+        date_added=date.today(),
+        category_id=cat_result.category_id
     )
 
     db.session.add(recipe)
@@ -59,9 +75,24 @@ def update_recipe(id):
     recipe = Recipe.query.get(id)
     # check if it exists
     if not recipe:
-        return {"error": "recipe id not found"}
+        return {"error": "recipe id not found"}, 404
     # get recipe details from the frontend request
     recipe_fields = recipe_schema.load(request.json)
+
+    # to update category first lookup category in the category table
+
+    cat_search = recipe_fields["recipe_category"]["category"]
+
+    # check if the category exists in the database
+    cat_result = db.session.query(Category).filter(
+        db.func.lower(Category.category) == db.func.lower(cat_search)).first()
+
+    if not cat_result:
+        return {"error": "category not found, enter a different category"}, 404
+
+    # Then update the id in the recipe table
+    recipe.category_id = cat_result.category_id
+
     # update the values for the recipe
     recipe.recipe_name = recipe_fields["recipe_name"]
     recipe.serves = recipe_fields["serves"]
@@ -74,9 +105,6 @@ def update_recipe(id):
 
     return jsonify(recipe_schema.dump(recipe)), 201
 
-# update a recipe category
-
-
 # delete a recipe
 
 
@@ -87,7 +115,7 @@ def delete_recipe(id):
 
     # if no recipe is found return message
     if not recipe:
-        return {"error": "recipe id not found"}
+        return {"error": "recipe id not found"}, 404
 
     # delete the recipe from the database
     db.session.delete(recipe)
@@ -95,7 +123,14 @@ def delete_recipe(id):
     # save changes
     db.session.commit()
 
-    return {"message": "Recipe successfully deleted from database"}
+    return {"message": "Recipe successfully deleted from database"}, 200
 
 
 # get ingredients for a recipe
+
+
+# catch validation errors
+@recipes.errorhandler(ValidationError)
+def register_validation_error(err):
+
+    return err.messages, 400
