@@ -15,8 +15,8 @@ class User(db.Model):
         backref="owner",
         cascade="all, delete"
     )
-    # ratings = db.relationship(
-    #     "Rating",
-    #     backref="recipe",
-    #     cascade="all, delete"
-    # )
+    ratings = db.relationship(
+        "Rating",
+        backref="user",
+        cascade="all, delete"
+    )

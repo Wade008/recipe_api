@@ -19,8 +19,8 @@ class Recipe(db.Model):
         backref="recipe",
         cascade="all, delete"
     )
-    # ratings = db.relationship(
-    #     "Rating",
-    #     backref="recipe",
-    #     cascade="all, delete"
-    # )
+    ratings = db.relationship(
+        "Rating",
+        backref="recipe",
+        cascade="all, delete"
+    )

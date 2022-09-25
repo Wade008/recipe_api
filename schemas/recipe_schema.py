@@ -15,7 +15,8 @@ class RecipeSchema(ma.Schema):
     # Schemas imported above
     owner = fields.Pluck(UserSchema, "name", many=False)
     recipe_category = fields.Pluck(CategorySchema, "category", many=False)
-    ingredient_list = fields.List(fields.Nested(IngredientListSchema, only=["ingredient","ingredient_requirements"]))
+    ingredient_list = fields.List(fields.Nested(IngredientListSchema, only=[
+                                  "ingredient", "ingredient_requirements"]))
 
     # add validation here
     recipe_name = ma.String(required=True)
