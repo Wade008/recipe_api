@@ -3,6 +3,28 @@ import pandas as pd
 
 # seed data
 
+
+# set user data
+
+users = [
+
+    {"email": "wadedoolan@email.com",
+     "password": "1234",
+     "name": "Wade Doolan",
+     "phone": "0123456789",
+     "dob": "1980-02-12",
+     "admin": True
+     },
+    {"email": "jmayer@email.com",
+     "password": "1234",
+     "name": "John Mayer",
+     "phone": "0124566789",
+     "dob": "1978-01-23",
+     "admin": False
+     }
+]
+
+
 # set recipe categories
 
 category_list = [
@@ -17,6 +39,7 @@ recipes = [
      "time_required": 30.0,
      "private": False,
      "date_added": date.today(),
+     "user_id": 1,
      "category_id": 1},
     {"recipe_name": "Toasted sandwiches",
      "serves": 2,
@@ -24,6 +47,7 @@ recipes = [
      "time_required": 15.0,
      "private": False,
      "date_added": date.today(),
+     "user_id": 2,
      "category_id": 3},
     {"recipe_name": "Fettuccine Alfredo",
      "serves": 2,
@@ -31,11 +55,12 @@ recipes = [
      "time_required": 40.0,
      "private": True,
      "date_added": date.today(),
+     "user_id": 2,
      "category_id": 21
      }
 ]
 
-food =  pd.read_csv("generic-food.csv", usecols=[0])
+food = pd.read_csv("generic-food.csv", usecols=[0])
 
 recipe_ingredients = food["FOOD NAME"].tolist()
 

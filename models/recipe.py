@@ -11,7 +11,7 @@ class Recipe(db.Model):
     private = db.Column(db.Boolean(), nullable=False)
     date_added = db.Column(db.Date(), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey(
-        "users.user_id"), nullbale=False)
+        "users.user_id"), nullable=False)
     category_id = db.Column(db.Integer, db.ForeignKey(
         "categories.category_id"), nullable=True)
     ingredient_list = db.relationship(
@@ -19,8 +19,8 @@ class Recipe(db.Model):
         backref="recipe",
         cascade="all, delete"
     )
-    ratings = db.relationship(
-        "Rating",
-        backref="recipe",
-        cascade="all, delete"
-    )
+    # ratings = db.relationship(
+    #     "Rating",
+    #     backref="recipe",
+    #     cascade="all, delete"
+    # )

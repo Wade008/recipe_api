@@ -5,7 +5,8 @@ from models.recipe import Recipe
 from models.category import Category
 from models.ingredient import Ingredient
 from models.ingredient_list import IngredientList
-from seed_data import category_list, recipes, recipe_ingredients, amount_list
+from models.user import User
+from seed_data import category_list, recipes, recipe_ingredients, amount_list, users
 from datetime import date
 
 
@@ -29,7 +30,22 @@ def drop_db():
 @db_commands.cli.command("seed")
 def seed_db():
     
-    
+# add users
+    for index in range(len(users)):
+        user_info = User(
+            email = users[index]["email"],
+            password=users[index]["password"],
+            name=users[index]["name"],
+            phone=users[index]["phone"],
+            dob=users[index]["dob"],
+            admin=users[index]["admin"]
+        )
+        db.session.add(user_info)
+
+    db.session.commit()
+
+
+#  add categories  
     for item in category_list:
         cat_item = Category(
             category=item
@@ -48,6 +64,7 @@ def seed_db():
             time_required=recipes[index]["time_required"],
             private=recipes[index]["private"],
             date_added=recipes[index]["date_added"],
+            user_id=recipes[index]["user_id"],
             category_id=recipes[index]["category_id"]
         )
         db.session.add(recipe_data)
