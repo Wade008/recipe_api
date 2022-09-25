@@ -190,14 +190,14 @@ def add_ingredients(id):
 
         ingredient_search = element["ingredient"]["ingredient"]
 
-        # check if the ingredient exists in the database
+        # check if the ingredient exists in the ingredient table
         ingredient_result = db.session.query(Ingredient).filter(
             db.func.lower(Ingredient.ingredient) == db.func.lower(ingredient_search)).first()
 
         if not ingredient_result:
             return {"error": f"{ingredient_search} not found, enter a different ingredient."}, 404
 
-        # now check if the ingredient_id has already be added to the ingredient_list for the given recipe_id. This is done to preent duplicate ingredients being added for a given recipe.
+        # now check if the ingredient_id has already be added to the ingredient_list for the given recipe_id. This is done to prevent duplicate ingredients being added for a given recipe.
 
         result = IngredientList.query.filter_by(
             recipe_id=id, ingredient_id=ingredient_result.ingredient_id).first()
@@ -222,9 +222,55 @@ def add_ingredients(id):
 
 # update an ingredient in a recipe
 
-    # if the ingredient changes need to fist check if the ingredient is available... similar to post method above
 
+@recipes.route("/<int:recipe_id>/ingredients/<int:list_id>", methods=["PUT"])
+def update_ingredient(recipe_id, list_id):
 
+    # seach for recipe
+    recipe = Recipe.query.get(recipe_id)
+    # check if it exists in the recipe table
+
+    if not recipe:
+        return {"error": "Recipe id not found."}, 404
+
+    # check if ingredient is in the ingredient_list table
+    ingredient = IngredientList.query.filter_by(
+        recipe_id=recipe_id, list_id=list_id).first()
+
+    if not ingredient:
+        return {"error": "Ingredient id not found for recipe."}, 404
+
+    # if the ingredient changes, need to fist check if the ingredient is available in the ingredients table.. similar to post method above
+
+    # note: ingredients must be added as JSON. List_id is included in the URL.
+
+    ingredient_fields = ingredient_list_schema.load(request.json)
+
+    new_ingredient = ingredient_fields["ingredient"]["ingredient"]
+    print(new_ingredient)
+
+    #  check if the ingredient exists in the ingredient table
+    ingredient_result = db.session.query(Ingredient).filter(
+        db.func.lower(Ingredient.ingredient) == db.func.lower(new_ingredient)).first()
+
+    if not ingredient_result:
+        return {"error": f"{new_ingredient} not found, enter a different ingredient."}, 404
+
+    # now check if the new ingredient has already been added to the recipe
+    result = db.session.query(IngredientList).filter(
+        IngredientList.recipe_id == recipe_id, IngredientList.ingredient_id == ingredient_result.ingredient_id, IngredientList.list_id != list_id).first()
+
+    if result:
+        return {"error": f"{ingredient_result.ingredient} has already been added to the recipe, add a different ingredient."}, 400
+
+    # update information in the ingredients_list table
+
+    ingredient.ingredient_requirements = ingredient_fields["ingredient_requirements"]
+    ingredient.ingredient_id = ingredient_result.ingredient_id
+
+    db.session.commit()
+
+    return jsonify(ingredient_list_schema.dump(ingredient)), 201
 
 
 # remove an ingredient from a recipe

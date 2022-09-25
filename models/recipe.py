@@ -10,9 +10,17 @@ class Recipe(db.Model):
     time_required = db.Column(db.Float(), nullable=False)
     private = db.Column(db.Boolean(), nullable=False)
     date_added = db.Column(db.Date(), nullable=False)
-    category_id = db.Column(db.Integer, db.ForeignKey("categories.category_id"), nullable=True)
+    user_id = db.Column(db.Integer, db.ForeignKey(
+        "users.user_id"), nullbale=False)
+    category_id = db.Column(db.Integer, db.ForeignKey(
+        "categories.category_id"), nullable=True)
     ingredient_list = db.relationship(
         "IngredientList",
+        backref="recipe",
+        cascade="all, delete"
+    )
+    ratings = db.relationship(
+        "Rating",
         backref="recipe",
         cascade="all, delete"
     )
