@@ -8,6 +8,7 @@ class UserSchema(ma.Schema):
         ordered = True
         fields = ["user_id", "email", "password",
                   "name", "phone", "dob", "admin"]
+        load_only = ["admin"]
 
     # add validation here
     email = ma.Email(required=True, allow_none=False, validate=Email())
@@ -16,7 +17,7 @@ class UserSchema(ma.Schema):
     phone = ma.String(required=False, validate=And(ContainsOnly(
         ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]), Length(equal=10)))
     dob = ma.Date(required = False)
-    admin = ma.Boolean(required = True, truthy=set([True]), falsy=set([False]))
+    
 
 
 # single recipe schema

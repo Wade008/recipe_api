@@ -24,7 +24,7 @@ def create_db():
 @db_commands.cli.command("drop")
 def drop_db():
     db.drop_all()
-    
+
 
 
     print("Tables dropped")

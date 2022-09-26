@@ -1,5 +1,6 @@
 from datetime import date
 import pandas as pd
+from main import bcrypt
 
 # seed data
 
@@ -9,14 +10,14 @@ import pandas as pd
 users = [
 
     {"email": "wadedoolan@email.com",
-     "password": "1234",
+     "password": bcrypt.generate_password_hash("123456789").decode("utf-8"),
      "name": "Wade Doolan",
      "phone": "0123456789",
      "dob": "1980-02-12",
      "admin": True
      },
     {"email": "jmayer@email.com",
-     "password": "1234",
+     "password": bcrypt.generate_password_hash("123456789").decode("utf-8"),
      "name": "John Mayer",
      "phone": "0124566789",
      "dob": "1978-01-23",

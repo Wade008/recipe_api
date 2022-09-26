@@ -9,7 +9,7 @@ class User(db.Model):
     name = db.Column(db.String(), nullable=False)
     phone = db.Column(db.String(), nullable=True)
     dob = db.Column(db.Date(), nullable=True)
-    admin = db.Column(db.Boolean(), nullable=False)
+    admin = db.Column(db.Boolean(), nullable=False, default=False)
     recipes = db.relationship(
         "Recipe",
         backref="owner",
@@ -17,6 +17,6 @@ class User(db.Model):
     )
     ratings = db.relationship(
         "Rating",
-        backref="users",
+        backref="rated_by",
         cascade="all, delete"
     )

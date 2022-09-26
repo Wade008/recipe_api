@@ -298,6 +298,14 @@ def delete_ingredient(recipe_id, list_id):
 
     return {"message": "Ingredient successfully deleted from database."}, 200
 
+# add a rating to a recipe
+
+
+
+
+
+
+
 
 # catch validation errors
 @ recipes.errorhandler(ValidationError)
