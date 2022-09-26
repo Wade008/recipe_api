@@ -9,7 +9,7 @@ class IngredientSchema(ma.Schema):
         fields = ["ingredient_id", "ingredient"]
 
     # add validation here
-    ingredient = ma.String(required=True, nullable=False, validate=Length(min=2))
+    ingredient = ma.String(required=True, allow_none=False, validate=Length(min=2))
 
 
 # single

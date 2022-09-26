@@ -1,4 +1,4 @@
-from dis import Instruction
+
 from flask import Blueprint
 from main import db
 from models.recipe import Recipe
@@ -6,8 +6,8 @@ from models.category import Category
 from models.ingredient import Ingredient
 from models.ingredient_list import IngredientList
 from models.user import User
-from seed_data import category_list, recipes, recipe_ingredients, amount_list, users
-from datetime import date
+from models.rating import Rating
+from seed_data import category_list, recipes, recipe_ingredients, amount_list, users, ratings_data
 
 
 db_commands = Blueprint("db", __name__)
@@ -24,16 +24,21 @@ def create_db():
 @db_commands.cli.command("drop")
 def drop_db():
     db.drop_all()
+    
+
+
     print("Tables dropped")
 
 # seed database
+
+
 @db_commands.cli.command("seed")
 def seed_db():
-    
-# add users
+
+    # add users
     for index in range(len(users)):
         user_info = User(
-            email = users[index]["email"],
+            email=users[index]["email"],
             password=users[index]["password"],
             name=users[index]["name"],
             phone=users[index]["phone"],
@@ -45,7 +50,7 @@ def seed_db():
     db.session.commit()
 
 
-#  add categories  
+#  add categories
     for item in category_list:
         cat_item = Category(
             category=item
@@ -69,7 +74,6 @@ def seed_db():
         )
         db.session.add(recipe_data)
 
-
     # add ingredient
 
     for ingredient in recipe_ingredients:
@@ -77,7 +81,6 @@ def seed_db():
             ingredient=ingredient
         )
         db.session.add(required_ingredient)
-
 
     # commit
     db.session.commit()
@@ -91,6 +94,21 @@ def seed_db():
             ingredient_id=amount_list[index]["ingredient_id"]
         )
         db.session.add(recipe_ingredient)
+
+    # commit
+    db.session.commit()
+
+    # add rating
+
+    for index in range(len(ratings_data)):
+        rating = Rating(
+            rating_date=ratings_data[index]["rating_date"],
+            rating=ratings_data[index]["rating"],
+            comment=ratings_data[index]["comment"],
+            user_id=ratings_data[index]["user_id"],
+            recipe_id=ratings_data[index]["recipe_id"]
+        )
+        db.session.add(rating)
 
     # commit
     db.session.commit()

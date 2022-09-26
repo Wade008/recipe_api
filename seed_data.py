@@ -125,3 +125,23 @@ amount_list = [
      "recipe_id": 3,
      "ingredient_id": 663}
 ]
+
+# rating data
+
+ratings_data = [
+    {
+        "rating_date": date.today(),    
+        "rating": 4,
+        "comment": "Lovely food",
+        "user_id": 1,
+        "recipe_id": 1
+    },
+    {
+        "rating_date": date.today(),    
+        "rating": 5,
+        "comment": "Wow food",
+        "user_id": 2,
+        "recipe_id": 1
+    }
+
+]
