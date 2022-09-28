@@ -8,6 +8,7 @@ from schemas.recipe_schema import recipe_schema, recipes_schema
 from schemas.ingredient_list_schema import ingredient_list_schema, ingredients_list_schema
 from datetime import date
 from marshmallow.exceptions import ValidationError
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
 recipes = Blueprint("recipes", __name__, url_prefix="/recipes")
 
@@ -38,6 +39,7 @@ def get_recipe(id):
 
 
 @recipes.route("/", methods=["POST"])
+@jwt_required
 def new_recipe():
 
     # add general error handling here

@@ -38,6 +38,7 @@ def seed_db():
     # add users
     for index in range(len(users)):
         user_info = User(
+            username=users[index]["username"],
             email=users[index]["email"],
             password=users[index]["password"],
             name=users[index]["name"],

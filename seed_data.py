@@ -9,14 +9,16 @@ from main import bcrypt
 
 users = [
 
-    {"email": "wadedoolan@email.com",
+    {"username": "doolanw",
+     "email": "wadedoolan@email.com",
      "password": bcrypt.generate_password_hash("123456789").decode("utf-8"),
      "name": "Wade Doolan",
      "phone": "0123456789",
      "dob": "1980-02-12",
      "admin": True
      },
-    {"email": "jmayer@email.com",
+    {"username": "mayerj",
+     "email": "jmayer@email.com",
      "password": bcrypt.generate_password_hash("123456789").decode("utf-8"),
      "name": "John Mayer",
      "phone": "0124566789",
@@ -131,14 +133,14 @@ amount_list = [
 
 ratings_data = [
     {
-        "rating_date": date.today(),    
+        "rating_date": date.today(),
         "rating": 4,
         "comment": "Lovely food",
         "user_id": 1,
         "recipe_id": 1
     },
     {
-        "rating_date": date.today(),    
+        "rating_date": date.today(),
         "rating": 5,
         "comment": "Wow food",
         "user_id": 2,
