@@ -11,7 +11,7 @@ class UserSchema(ma.Schema):
         load_only = ["admin"]
 
     # add validation here
-    username = ma.String(required=True, allow_none=False)
+    username = ma.String(required=True, allow_none=False, validate=Length(min=2))
     email = ma.Email(required=False, allow_none=False)
     password = ma.String(required=True, allow_non=False,
                          validate=Length(min=8))
