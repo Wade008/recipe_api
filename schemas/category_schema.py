@@ -7,9 +7,9 @@ from marshmallow.validate import Length
 class CategorySchema(ma.Schema):
     class Meta:
         ordered = True
-        fields = ["category_id", "category", "recipes"]
+        fields = ["category_id", "category"]
 
-    recipes = fields.List(fields.Nested('RecipeSchema', only=["recipe_name", "serves", "time_required","date_added"]))
+    # recipes = fields.List(fields.Nested('RecipeSchema', only=["recipe_name", "serves", "time_required","date_added"]))
 
     # add validation here
     category = ma.String(required=True, allow_none=False, validate=Length(min=3))

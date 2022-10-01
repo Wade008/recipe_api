@@ -17,10 +17,42 @@ recipes = Blueprint("recipes", __name__, url_prefix="/recipes")
 
 # all recipe... add search criteria later
 # anyone can view all recipes that are not private
+
+
 @recipes.route("/", methods=["GET"])
 def get_recipes():
 
+    # can use a query_sting to search for a recipe by name, category
+    if request.query_string:
 
+        request_arg = request.args.to_dict()
+
+        if len(request_arg) > 2:
+            return {"error": "Too many arguments provided in query string"}, 400
+
+        # convert dict keys values to lowercase
+        request_args_lower = {k: v.lower()
+                              for (k, v) in request_arg.items()}
+
+        
+        print(request_args_lower)
+        if "recipe_name" in request_args_lower.keys() and "category" in request_args_lower.keys():
+            filtered_recipes = db.session.query(Recipe).join(Category).filter(db.func.lower(Recipe.recipe_name).like(
+                f"%{request_args_lower['recipe_name']}%"), db.func.lower(Category.category).like(f"%{request_args_lower['category']}%"), Recipe.private == False).all()
+        elif "category" in request_args_lower.keys():
+            filtered_recipes = db.session.query(Recipe).join(Category).filter(db.func.lower(Category.category).like(f"%{request_args_lower['category']}%"), Recipe.private == False).all()
+        elif "recipe_name" in request_args_lower.keys():
+             filtered_recipes = db.session.query(Recipe).filter(db.func.lower(Recipe.recipe_name).like(f"%{request_args_lower['recipe_name']}%"), Recipe.private == False).all()
+        else:
+            return  {"error": "Incorrect key word error."}, 404
+
+        if filtered_recipes == []:
+            return {"message": "No recipes found."}, 404
+        
+
+        result = recipes_schema.dump(filtered_recipes)
+        return jsonify(result), 200
+        # return {"test": "test"}
 
     # only show recipes that are not private
     recipes_list = Recipe.query.filter_by(private=False).all()
@@ -29,6 +61,7 @@ def get_recipes():
 
 # get one recipe
 # anyone can view a recipe that is not private
+
 
 @recipes.route("/<int:id>", methods=["GET"])
 def get_recipe(id):
@@ -58,7 +91,7 @@ def user_recipes():
     if user_id == "admin":
         recipes = Recipe.query.all()
 
-    else: 
+    else:
         # get all recipes for the user
         recipes = Recipe.query.filter_by(user_id=user_id).all()
 
@@ -79,7 +112,7 @@ def new_recipe():
     # get user_id from jwt
     user_id = get_jwt_identity()
 
-    # check if admin 
+    # check if admin
     if user_id == "admin":
         user = User.query.filter_by(admin=True).first()
     else:
@@ -129,7 +162,7 @@ def update_recipe(id):
     # get user_id from jwt
     user_id = get_jwt_identity()
 
-    # check if admin 
+    # check if admin
     if user_id == "admin":
         user = User.query.filter_by(admin=True).first()
     else:
@@ -138,12 +171,12 @@ def update_recipe(id):
 
     # seach for recipe
     recipe = Recipe.query.get(id)
-    
+
     # check if it exists
 
     if not recipe:
         return {"error": "Recipe id not found."}, 404
-    
+
     # check if recipe belongs to user
     if recipe.user_id != user.user_id and user_id != "admin":
         return {"error": "You do not have permission to update this recipe."}, 401
@@ -185,10 +218,10 @@ def update_recipe(id):
 @jwt_required()
 def delete_recipe(id):
 
-     # get user_id from jwt
+    # get user_id from jwt
     user_id = get_jwt_identity()
 
-    # check if admin 
+    # check if admin
     if user_id == "admin":
         user = User.query.filter_by(admin=True).first()
     else:
@@ -203,7 +236,7 @@ def delete_recipe(id):
 
     # check if recipe belongs to user
     if recipe.user_id != user.user_id and user_id != "admin":
-        return {"error": "You do not have permission to delete this recipe."}, 401    
+        return {"error": "You do not have permission to delete this recipe."}, 401
 
     # delete the recipe from the database
     db.session.delete(recipe)
@@ -262,13 +295,12 @@ def add_ingredients(id):
     # get user_id from jwt
     user_id = get_jwt_identity()
 
-    # check if admin 
+    # check if admin
     if user_id == "admin":
         user = User.query.filter_by(admin=True).first()
     else:
         # get user details from the db
         user = User.query.get(user_id)
-
 
     # seach for recipe
     recipe = Recipe.query.get(id)
@@ -278,7 +310,7 @@ def add_ingredients(id):
 
     # check if recipe belongs to user
     if recipe.user_id != user.user_id and user_id != "admin":
-        return {"error": "You do not have permission to update this recipe."}, 401   
+        return {"error": "You do not have permission to update this recipe."}, 401
 
     # note: ingredients must be added inside a list, even for just one ingredient. List_id not required in post.
     ingredients_fields = ingredients_list_schema.load(request.json)
@@ -327,18 +359,18 @@ def add_ingredients(id):
 @recipes.route("/<int:recipe_id>/ingredients/<int:list_id>", methods=["PUT"])
 @jwt_required()
 def update_ingredient(recipe_id, list_id):
-    
+
     # get user_id from jwt
     user_id = get_jwt_identity()
 
-    # check if admin 
+    # check if admin
     if user_id == "admin":
         user = User.query.filter_by(admin=True).first()
     else:
         # get user details from the db
         user = User.query.get(user_id)
 
-    # seach for recipe
+    # seach for recipe using recipe_id
     recipe = Recipe.query.get(recipe_id)
     # check if it exists in the recipe table
 
@@ -347,7 +379,7 @@ def update_ingredient(recipe_id, list_id):
 
     # check if recipe belongs to user
     if recipe.user_id != user.user_id and user_id != "admin":
-        return {"error": "You do not have permission to update this recipe."}, 401    
+        return {"error": "You do not have permission to update this recipe."}, 401
 
     # check if ingredient is in the ingredient_list table
     ingredient = IngredientList.query.filter_by(
@@ -356,14 +388,13 @@ def update_ingredient(recipe_id, list_id):
     if not ingredient:
         return {"error": "Ingredient id not found for recipe."}, 404
 
-    # if the ingredient changes, need to fist check if the ingredient is available in the ingredients table.. similar to post method above
+    # if the ingredient changes, need to first check if the ingredient is available in the ingredients table.. similar to post method above
 
-    # note: ingredients must be added as JSON. List_id is included in the URL.
+    # note: ingredient and ingredient_requirements must be added as JSON. List_id is included in the URL.
 
     ingredient_fields = ingredient_list_schema.load(request.json)
 
     new_ingredient = ingredient_fields["ingredient"]["ingredient"]
-    print(new_ingredient)
 
     #  check if the ingredient exists in the ingredient table
     ingredient_result = db.session.query(Ingredient).filter(
@@ -394,11 +425,11 @@ def update_ingredient(recipe_id, list_id):
 @recipes.route("/<int:recipe_id>/ingredients/<int:list_id>", methods=["DELETE"])
 @jwt_required()
 def delete_ingredient(recipe_id, list_id):
-    
+
     # get user_id from jwt
     user_id = get_jwt_identity()
 
-    # check if admin 
+    # check if admin
     if user_id == "admin":
         user = User.query.filter_by(admin=True).first()
     else:
@@ -420,7 +451,7 @@ def delete_ingredient(recipe_id, list_id):
 
      # check if recipe belongs to user
     if recipe.user_id != user.user_id and user_id != "admin":
-        return {"error": "You do not have permission to update this recipe."}, 401    
+        return {"error": "You do not have permission to update this recipe."}, 401
 
     # delete the recipe from the database
     db.session.delete(ingredient)
@@ -432,6 +463,7 @@ def delete_ingredient(recipe_id, list_id):
 
 # add a rating to a recipe. Note any user can rate a recipe
 
+
 @recipes.route("/<int:recipe_id>/rating", methods=["POST"])
 @jwt_required()
 def add_rating(recipe_id):
@@ -442,7 +474,7 @@ def add_rating(recipe_id):
     # get user_id from jwt
     user_id = get_jwt_identity()
 
-    # check if admin 
+    # check if admin
     if user_id == "admin":
         user = User.query.filter_by(admin=True).first()
     else:
@@ -454,7 +486,7 @@ def add_rating(recipe_id):
     # check if it exists
     if not recipe:
         return {"error": "Recipe id not found."}, 404
-    
+
     # check if recipe is private
     if recipe.private:
         return {"error": "This recipe is private. You do not have permission to update this recipe."}, 401
@@ -478,14 +510,15 @@ def add_rating(recipe_id):
 
 #  Delete a rating. Only the user who posted the rating can delete the rating
 
+
 @recipes.route("/<int:recipe_id>/rating/<int:rating_id>", methods=["DELETE"])
 @jwt_required()
 def delete_rating(recipe_id, rating_id):
 
-     # get user_id from jwt
+    # get user_id from jwt
     user_id = get_jwt_identity()
 
-    # check if admin 
+    # check if admin
     if user_id == "admin":
         user = User.query.filter_by(admin=True).first()
     else:
@@ -507,7 +540,7 @@ def delete_rating(recipe_id, rating_id):
 
      # check if rating belongs to user
     if rating.user_id != user.user_id and user_id != "admin":
-        return {"error": "You do not have permission delete this rating."}, 401    
+        return {"error": "You do not have permission delete this rating."}, 401
 
     # delete the recipe from the database
     db.session.delete(rating)
@@ -518,6 +551,8 @@ def delete_rating(recipe_id, rating_id):
     return {"message": "Rating successfully removed from the recipe."}, 200
 
 # catch validation errors
+
+
 @recipes.errorhandler(ValidationError)
 def register_validation_error(err):
 

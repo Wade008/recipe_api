@@ -50,7 +50,7 @@ def register_user():
     db.session.commit()
 
     token = create_access_token(identity=str(
-        user.user_id), expires_delta=timedelta(hours=1))
+        user.user_id), expires_delta=timedelta(hours=4))
 
     return {"user": user.username, "token": token}
 
@@ -86,7 +86,7 @@ def login_user():
         id_2 = str(user.username)
 
    
-    token = create_access_token(identity=id_1, expires_delta=timedelta(hours=1))
+    token = create_access_token(identity=id_1, expires_delta=timedelta(hours=4))
 
     print(f"id_1: {id_1}")
     print(f"id_2: {id_2}")

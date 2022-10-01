@@ -13,6 +13,6 @@ class IngredientSchema(ma.Schema):
 
 
 # single
-category_schema = IngredientSchema()
+ingredient_schema = IngredientSchema()
 # multiple
-categories_schema = IngredientSchema(many=True)
+ingredients_schema = IngredientSchema(many=True)
