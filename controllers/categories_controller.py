@@ -132,6 +132,7 @@ def update_category(id):
 # delete a category. Only an admin can delete a category
 
 @categories.route("/<int:id>", methods=["DELETE"])
+
 @jwt_required()
 def delete_category(id):
 

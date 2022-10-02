@@ -17,7 +17,7 @@ class RecipeSchema(ma.Schema):
     recipe_category = fields.Pluck(CategorySchema, "category", many=False)
     ingredient_list = fields.List(fields.Nested(IngredientListSchema, only=[
                                   "ingredient", "ingredient_requirements"]))
-    ratings = fields.List(fields.Nested(RatingSchema, only=["rated_by","rating", "comment"]))
+    ratings = fields.List(fields.Nested(RatingSchema, only=["rated_by","rating_id","rating", "comment"]))
 
     # add validation here
     recipe_name = ma.String(required=True, allow_none=False)

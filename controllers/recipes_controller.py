@@ -270,6 +270,8 @@ def get_ingredients(id):
 @recipes.route("/<int:recipe_id>/ingredients/<int:list_id>", methods=["GET"])
 @jwt_required()
 def get_one_ingredient(recipe_id, list_id):
+
+
     # seach for recipe
     recipe = Recipe.query.get(recipe_id)
     # check if it exists
