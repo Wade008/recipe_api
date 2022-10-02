@@ -12,6 +12,7 @@ from schemas.rating_schema import rating_schema, ratings_schema
 from datetime import date
 from marshmallow.exceptions import ValidationError
 from flask_jwt_extended import jwt_required, get_jwt_identity
+from module.modules import check_if_admin
 
 recipes = Blueprint("recipes", __name__, url_prefix="/recipes")
 
@@ -113,11 +114,7 @@ def new_recipe():
     user_id = get_jwt_identity()
 
     # check if admin
-    if user_id == "admin":
-        user = User.query.filter_by(admin=True).first()
-    else:
-        # get user details from the db
-        user = User.query.get(user_id)
+    user = check_if_admin(user_id)
 
     # add general error handling here
     recipe_fields = recipe_schema.load(request.json)
@@ -163,11 +160,7 @@ def update_recipe(id):
     user_id = get_jwt_identity()
 
     # check if admin
-    if user_id == "admin":
-        user = User.query.filter_by(admin=True).first()
-    else:
-        # get user details from the db
-        user = User.query.get(user_id)
+    user = check_if_admin(user_id)
 
     # seach for recipe
     recipe = Recipe.query.get(id)
@@ -222,11 +215,9 @@ def delete_recipe(id):
     user_id = get_jwt_identity()
 
     # check if admin
-    if user_id == "admin":
-        user = User.query.filter_by(admin=True).first()
-    else:
-        # get user details from the db
-        user = User.query.get(user_id)
+
+    user = check_if_admin(user_id)
+
     # search for recipe by id
     recipe = Recipe.query.get(id)
 
@@ -298,12 +289,8 @@ def add_ingredients(id):
     user_id = get_jwt_identity()
 
     # check if admin
-    if user_id == "admin":
-        user = User.query.filter_by(admin=True).first()
-    else:
-        # get user details from the db
-        user = User.query.get(user_id)
-
+    user = check_if_admin(user_id)
+   
     # seach for recipe
     recipe = Recipe.query.get(id)
     # check if it exists
@@ -366,11 +353,7 @@ def update_ingredient(recipe_id, list_id):
     user_id = get_jwt_identity()
 
     # check if admin
-    if user_id == "admin":
-        user = User.query.filter_by(admin=True).first()
-    else:
-        # get user details from the db
-        user = User.query.get(user_id)
+    user = check_if_admin(user_id)
 
     # seach for recipe using recipe_id
     recipe = Recipe.query.get(recipe_id)
@@ -432,12 +415,8 @@ def delete_ingredient(recipe_id, list_id):
     user_id = get_jwt_identity()
 
     # check if admin
-    if user_id == "admin":
-        user = User.query.filter_by(admin=True).first()
-    else:
-        # get user details from the db
-        user = User.query.get(user_id)
-
+    user = check_if_admin(user_id)
+   
     # seach for recipe
     recipe = Recipe.query.get(recipe_id)
     # check if it exists
@@ -477,11 +456,8 @@ def add_rating(recipe_id):
     user_id = get_jwt_identity()
 
     # check if admin
-    if user_id == "admin":
-        user = User.query.filter_by(admin=True).first()
-    else:
-        # get user details from the db
-        user = User.query.get(user_id)
+
+    user = check_if_admin(user_id)
 
     # seach for recipe
     recipe = Recipe.query.get(recipe_id)
@@ -521,11 +497,7 @@ def delete_rating(recipe_id, rating_id):
     user_id = get_jwt_identity()
 
     # check if admin
-    if user_id == "admin":
-        user = User.query.filter_by(admin=True).first()
-    else:
-        # get user details from the db
-        user = User.query.get(user_id)
+    user = check_if_admin(user_id)
 
     # seach for recipe
     recipe = Recipe.query.get(recipe_id)

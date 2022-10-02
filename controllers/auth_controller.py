@@ -7,6 +7,7 @@ from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_requir
 from models.user import User
 from schemas.user_schema import user_schema
 from marshmallow.exceptions import ValidationError
+from module.modules import check_if_admin
 
 auth = Blueprint("auth", __name__, url_prefix="/auth")
 
@@ -84,13 +85,9 @@ def login_user():
     else:
         id_1 = str(user.user_id)
         id_2 = str(user.username)
-
-   
+    # generate JWT
     token = create_access_token(identity=id_1, expires_delta=timedelta(hours=4))
 
-    print(f"id_1: {id_1}")
-    print(f"id_2: {id_2}")
- 
     return {"username": id_2, "token": token}
 
 # get user dtails
@@ -103,11 +100,7 @@ def get_user():
     user_id = get_jwt_identity()
 
     # check if user is admin
-    if user_id == "admin":
-        user = User.query.filter_by(admin=True).first()
-    else:
-        # get user details from the db
-        user = User.query.get(user_id)
+    user = check_if_admin(user_id)
 
     result = user_schema.dump(user)
     return jsonify(result), 200
@@ -129,12 +122,8 @@ def update_user():
     user_id = get_jwt_identity()
 
     # check if user is admin
-    if user_id == "admin":
-        user = User.query.filter_by(admin=True).first()
-    else:
-        # get user details from the db
-        user = User.query.get(user_id)
-
+    user = check_if_admin(user_id)
+   
     # check if the submitted email and username are unique
       
     # Check if new username already exists in the databse
@@ -190,7 +179,7 @@ def delete_user():
     # commit changes in the db
     db.session.commit()
 
-    return {"success": "User deleted successfully"}
+    return {"message": "User deleted successfully"}
 
 # catch validation errors
 @auth.errorhandler(ValidationError)
