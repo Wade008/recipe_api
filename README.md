@@ -1,5 +1,14 @@
 # A flask backend for an online recipe application.
 
+To start the application:
+- ```source venv/bin/activate``` Activate the virtualenv
+- ```flask run``` Start the server
+
+To stop the application
+- ```CTRL+C``` Stop the server
+- ```deactivate``` Deactivate the virtualenv
+
+
 ## End Point Documentation
 
 ### Recipe API Endpoints User registration, login, read, update and delete 
